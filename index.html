@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="./assets/icon.png">
+    <title>Pokemon List</title>
+</head>
+<body class="flex-and-align">
+
+    <nav class="nav-bar">
+        <img src="./assets/pokemonlogo.png" alt="poklogo" class="logo">
+    </nav>
+    
+    <div class="pokemon-filter-box">
+        <input type="text" placeholder="Filtre su pokemon" class="pokemon-filter" autocomplete="off">
+    </div>
+
+
+    <!-- <button id="sortBtn">Ordenar por</button> -->
+    <select name="color" id="sortBtn">
+        <option value="default" selected>Ordenar por</option>
+        <option value="name">Nombre</option>
+        <option value="id">ID</option>
+        <option value="type">Tipo</option>
+    </select>
+    
+    <div class="inventory">
+        <button class="inventory-button">Inventario</button>
+        <div class="inventory-details invisible">
+            <p>Pokemones capturados: <strong id="pokemonCountDOM">0</strong></p>
+        </div>
+    </div>
+
+    <i class="fa-solid fa-circle-question question-symbol"></i>
+
+    <div class="invisible" id="questionSymbolDetails">
+        <p>En el botón central podrás añadir pokemones y guardarlos en tu colección.</p>
+        <p>Entre las funciones de la página se encuentra:</p>
+        <ul>
+            <li>Creación y eliminación de pokemones</li>
+            <li>Si haces click sobre el nombre de un pokemon, puedes cambiarlo.</li>
+            <li>Filtrado</li>
+            <li>Ordenamiento</li>
+            <li>Paginado</li>
+            <li>Autocompletado al añadir un pokemon</li>
+            <li>Tu progreso queda guardado!</li>
+        </ul>
+    </div>
+
+    
+
+    <div class="list-box">
+        <i class="fa-solid fa-angle-left" id="previousPageButton"></i>
+        <div id="pokemonInputBox" style="display: none;">
+            <label for="insertedPokemon">Inserte el pokemon que desea añadir a la lista.</label>
+            <input type="text" name="insertedPokemon" id="pokemonInput" placeholder="Inserte un pokemon" autocomplete="off">
+            <ul id="pokemonAutoCompleteList">
+            </ul>
+        </div>
+        <button class="list-button flex-and-align">+</button>
+        <i class="fa-solid fa-angle-right" id="nextPageButton"></i>
+        <p class="current-page-box"><strong class="current-page-count">0</strong>/<strong class="last-page-count">0</strong></p>
+    </div>
+
+
+    <!-- <h2>Cantidad de pokemones: <strong id="pokemonCountDOM">0</strong></h2> -->
+    
+<!--     <div class="current-page-box">
+        <h2 class="current-page">Pagina<strong id="pageCountDOM">0</strong></h2>
+    </div>   -->
+
+    <i class="fa-solid fa-gear settings-symbol"></i>
+
+    <script src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+*{
+    box-sizing: border-box;
+    border-radius: 30px;
+    font-family: 'Reem Kufi', sans-serif;
+    z-index: 0;
+}
+
+.flex-and-align{
+    display: flex;
+    align-items: center;
+}
+
+
+
+#questionSymbolDetails{
+    position:absolute;
+    top: 59px;
+    padding: 2px 8px 2px 8px;
+    border-radius: 0;
+    right: 0px;
+    width: 350px;
+    background-color: #000;
+    color: #fff;
+    opacity: 0.9;
+    border: 1px solid #000;
+    z-index: 1;
+}
+
+
+#previousPageButton, #nextPageButton{
+    position: absolute;
+    transform: scale(6);
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+#previousPageButton:hover, #nextPageButton:hover{
+    transform: scale(6.5);
+    transition: 0.2s;
+    color: rgba(0, 0, 0, 1);
+}
+
+#previousPageButton{
+    left: -40px;
+}
+
+#nextPageButton{
+    right: -40px;
+}
+
+
+#sortBtn{
+    cursor: pointer;
+    margin: 0;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 5px;
+    position: absolute;
+    top: 15px;
+    right: 330px;
+}
+#sortBtn:hover{
+    background-color: rgb(228, 228, 228);
+    transform: scale(1.1);
+    transition: all 0.2s;
+}
+
+
+/* .current-page, #pageCountDOM{
+    width:20px;
+    word-wrap: break-word;
+    text-align:center;
+    line-height: 30px;
+} */
+/* #pageCountDOM{
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.current-page{
+    width: 40px;
+   position:absolute;
+   text-transform: uppercase;
+   font-size:21px;
+   height: 215px;
+}
+.current-page-box{
+    position: absolute;
+    z-index: 10;
+    top: 33%;
+    right: 6.5%;
+} */
+
+.autocomplete-item{
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+.autocomplete-item:hover{
+   color: #f01515;
+    transform: scale(1.1);
+    transition: all 0.2s;
+}
+
+#pokemonInputBox, #pokemonInput{
+    width: 600px;
+    height: 400px;
+}
+
+#pokemonInputBox{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+    width: 600px;
+    height: 400px;
+    background-color:#f0effae7;
+    align-items: center;
+    padding: 10px;
+}
+
+#pokemonAutocompleteList{
+}
+
+::placeholder {
+    color: rgb(102, 102, 102);
+}
+
+#pokemonInput{
+    z-index: 200;
+    height: 50px;
+    font-size: 3rem;
+    text-align: center;
+    position: relative;
+    top: 0px;
+    width: 500px;
+    background-color: #ffffff;
+    color: rgb(102, 102, 102);
+    border: 1px solid #000;
+}
+
+#pokemonInput:focus{
+    border: 1px solid #9f0e19;
+}
+
+
+body{
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 100vw;
+    background-color: #6d6464;
+    background-image: url(./assets/thumb-1920-1039414.png);
+    margin: -10px 10px;
+    overflow-x: hidden;
+}
+
+.question-symbol{
+    transform: scale(3);
+    position: absolute;
+    top: 21px;
+    right: 30px;
+    animation: color-change-2x 2s linear infinite alternate both;
+    opacity: 0.95;
+    background-color: #000;
+}
+.question-symbol:hover{
+    transform: scale(3.3);
+    transition: all .2s ease-in-out;
+    cursor: pointer;
+}
+
+.pokemon-filter-box{
+    margin-top: 70px;
+}
+
+.pokemon-filter, .pokemon-filter-box > button{
+    border-radius: 5px;
+    margin: 0 5px 10px 0px;
+    box-shadow: 0px 8px 30px 0px #00000080;
+    border: 1px solid black;
+    width: 200px;
+    height: 30px;
+}
+
+button{
+    margin-right: 0;
+}
+
+.list-box{
+    display: grid;
+    min-width: 240px;
+    max-width: 840px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-auto-rows: minmax(200px, auto); 
+    justify-items: center;
+    align-items: center;
+    background-color: #F2F2F2;
+    box-shadow: 0px 8px 16px 0px #00000080;
+    padding: 20px;
+    background-image: url(./assets/pokemon-blue-background-video-games-wallpaper-preview.jpg);
+    border: 1px solid black;
+    position: relative;
+}
+
+.list-button{
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    font-size: 10rem;
+    font-family: sans-serif;
+    opacity: 0.8;
+}
+
+.list-button:hover{
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+.pokemon-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 30px 5px 30px 5px;
+    margin: 15px;
+    box-shadow: 0px 8px 16px 0px #00000080;
+    width: 165px;
+}
+.pokemon-card:hover{
+    transform: scale(1.05);
+    transition: all 0.5s;
+}
+
+img{
+    background-color: #ffffff;
+    box-shadow: 0px 8px 30px 0px #00000080;
+}
+
+.pokemon-types-box{
+    display: flex;
+    justify-content: space-evenly;
+    width: 160px;
+}
+
+
+.list-pokemon-type{
+    box-shadow: 0px 8px 18px 0px #00000080;
+    padding: 5px 10px 5px 10px;
+    background-color: #ffffff;
+    width: 75px;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.list-pokemon-name{
+    font-weight: 500;
+}
+ 
+.erase-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    font-size: 25px;
+    right: 4px;
+    top: 4px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    font-weight: 500;
+    padding: 0;
+    margin: 0;
+    line-height: 3px;
+}
+.erase-btn:hover{
+    color: red;
+    animation: pulsate-fwd 0.5s ease-in-out infinite both;
+    cursor: pointer;
+}
+
+h2{
+    color: #ffffff;
+    border: 1px solid black;
+    background-color: rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    padding: 1px 8px 1px 8px;
+}
+h2 > strong {
+    margin: 5px;
+}
+
+.settings-symbol{
+    transform: scale(3);
+    position: absolute;
+    right: 30px;
+    top: 90vh;
+}
+.settings-symbol:hover{
+    transform: scale(3.3);
+    cursor: pointer;
+}
+
+.fa-trash-can{
+    transform: scale(0.7);
+}
+
+
+/* ----------------------------------------------
+ * Generated by Animista on 2022-4-5 19:19:35
+ * Licensed under FreeBSD License.
+ * See http://animista.net/license for more info. 
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation pulsate-fwd
+ * ----------------------------------------
+ */
+ @keyframes pulsate-fwd {
+    0% {
+      transform: scale(1.1);
+    }
+    50% {
+      transform: scale(1.3);
+    }
+    100% {
+      transform: scale(1.1);
+    }
+  }
+  
+/* ----------------------------------------------
+ * Generated by Animista on 2022-4-5 19:39:15
+ * Licensed under FreeBSD License.
+ * See http://animista.net/license for more info. 
+ * w: http://animista.net, t: @cssanimista
+ * ---------------------------------------------- */
+
+/**
+ * ----------------------------------------
+ * animation color-change-2x
+ * ----------------------------------------
+ */
+ @keyframes color-change-2x {
+    0% {
+      color: #e9e64b;
+    }
+
+    100% {
+        color: #f01515;
+    }
+  }
+  
+
+  
+  @media only screen and (max-width: 955px) {
+      .list-box{
+          display: flex;
+          flex-direction: column;
+          margin-top: -80px;
+          transform: scale(0.85);
+      }
+  }
+
+
+.current-page-box{
+    position: absolute;
+    bottom: -5px;
+    right: 10px;
+    font-size: 2rem;
+    margin: 0;
+    padding: 0;
+    color: #000;
+}
+
+.inventory{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    width: 205px;
+    top: 15px;
+    position: absolute;
+    right:105px;
+    z-index: 10;
+}
+
+.inventory-details{
+    border-radius: 0;
+    width: 205px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid #fff;
+    color: #fff;
+    transform: scalex(1.1);
+}
+
+.inventory-details > p{
+    margin: 5px;
+}
+.inventory-details > p > strong{
+    margin-left: 5px;
+}
+
+.inventory-button{
+    cursor: pointer;
+    margin: 0;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+.inventory-button:hover{
+    background-color: rgb(228, 228, 228);
+    transform: scale(1.1);
+    transition: all 0.2s;
+}
+
+.invisible{
+    display: none;
+}
+
+.nav-bar{
+    height: 60px;
+    background-color: #000;
+    opacity: 0.5;
+    width: 110vw;
+    border-radius: 0;
+    top: -1px;
+    left: -10px;
+    position: absolute; 
+    margin-bottom: 10px;
+}
+.nav-bar img{
+    transform: scale(0.3);
+    position: relative;
+    top: -48px;
+    left: -120px;
+    background-color: rgba(0, 0, 0, 0);
+}
