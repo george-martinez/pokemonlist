@@ -432,10 +432,12 @@ const addElement = (pokemon, fromStorage) => {
 
 const changePokemonName = (e) => {
     let newName = prompt("Inserta un nuevo nombre");
-    e.target.innerHTML = newName;
-    let previous = JSON.parse(window.localStorage.getItem(e.target.parentNode.id));
-    previous.name = newName;
-    window.localStorage.setItem(`${e.target.parentNode.id}`, JSON.stringify(previous));
+    if(newName != ''){
+        e.target.innerHTML = newName;
+        let previous = JSON.parse(window.localStorage.getItem(e.target.parentNode.id));
+        previous.name = newName;
+        window.localStorage.setItem(`${e.target.parentNode.id}`, JSON.stringify(previous));
+    }
 }
 
 /* Doc Listener */
