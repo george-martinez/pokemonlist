@@ -231,7 +231,7 @@ pokemonInput.addEventListener("keyup", () => {
 });
 
 pokemonInput.addEventListener("keyup", (e) => {
-    if (e.code == "Enter") {
+    if (e.key == "Enter") {
         let pokemon = {
             nameFetch: `${(e.target.value.toLowerCase())}`,
             name: `${e.target.value}`,
