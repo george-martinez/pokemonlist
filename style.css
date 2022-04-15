@@ -326,21 +326,6 @@ h2 > strong {
 }
 
 /* --------------------------------------------
-                SETTINGS SYMBOL
------------------------------------------------*/
-
-.settings-symbol {
-  transform: scale(3);
-  position: absolute;
-  right: 30px;
-  top: 90vh;
-}
-.settings-symbol:hover {
-  transform: scale(3.3);
-  cursor: pointer;
-}
-
-/* --------------------------------------------
                 INVENTORY
 -----------------------------------------------*/
 .inventory {
