@@ -1,4 +1,4 @@
-/* References */
+/* References of Elements*/
 const listBox = document.querySelector(".list-box");
 const listAddBtn = document.querySelector(".list-button");
 const inputFilter = document.querySelector(".pokemon-filter");
@@ -11,14 +11,23 @@ const inventoryBtn = document.querySelector(".inventory-button");
 const inventoryDetails = document.querySelector(".inventory-details");
 const questionSymbol = document.querySelector(".question-symbol");
 const questionSymbolDetails = document.getElementById("questionSymbolDetails");
+const nextPageBtn = document.getElementById("nextPageButton");
+const previousPageBtn = document.getElementById("previousPageButton");
+const pageCountDOM = document.getElementById("pageCountDOM");
+const currentPageDOM = document.querySelector(".current-page-count");
+const lastPageDOM = document.querySelector(".last-page-count");
+const sortBtn = document.getElementById("sortBtn");
 
-let savedPokemons = [];
-const allPokemonsArr = [];
+/* Configuration */
 const qPokemonToShow = 10;
 const POKEMONSPERPAGE = 5;
+
+/* Global variables */
+let savedPokemons = [];
 let currentPage = 0;
 let idCount = 0;
 let pokemonCount = 0;
+const allPokemonsArr = [];
 
 const pokemonColors = {
     electric: '#F7D02C',
@@ -41,19 +50,39 @@ const pokemonColors = {
     fairy: '#D685AD'
 }
 
-questionSymbol.addEventListener("click", () => questionSymbolDetails.classList.toggle("invisible"));
+/* 
+Process: Request all Pokemon Names and save them on the Array allPokemonsArr. 
+*/
+const getAllPokemons = () => {
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0`)
+        .then(response => response.json())
+        .then(allPokemonsObject => {
+            for (let i = 0; i < allPokemonsObject.count; i++) {
+                allPokemonsArr[i] = allPokemonsObject.results[i].name;
+            }
+        });
+}
 
-inventoryBtn.addEventListener("click", () => {
-    inventoryDetails.classList.toggle("invisible");
-});
+getAllPokemons();
 
-/* Inventory Functions */
-const removeFromInventory = (type) => {
+
+/* --------------------------------------------
+                Inventory Functions
+-----------------------------------------------*/
+/* 
+Receives: A pokemon type. 
+Process: Substract one unit of the received type.
+*/
+const subtractFromInventory = (type) => {
     let id = document.getElementById(`${type.toLowerCase()}`);
     let idAux = Number(id.innerHTML) - 1;
     id.innerHTML = `${idAux}`;
 }
 
+/*
+Receives: An Array of types or a type. 
+Process: Add the types to inventory.
+*/
 const addToInventory = (types) => {
     for (let i = 0; i < types.length; i++) {
         let id = document.getElementById(`${types[i].type.name}`);
@@ -62,8 +91,10 @@ const addToInventory = (types) => {
     }
 }
 
-
-/* Returns the first line of a string. */
+/*
+Receives: A string to cut. 
+Returns: The first line of the string, before a jumpline. 
+*/
 const cutFirstLine = (string) => {
     let stringAux = '';
 
@@ -78,18 +109,21 @@ const cutFirstLine = (string) => {
     return stringAux;
 }
 
-
+/* 
+Receives: The click event of the selected type of sort.
+Process: Sorts and refresh all pages.
+*/
 const sortPokemons = (e) => {
     let items = listBox.childNodes;
     let itemsArr = [];
 
     for (let i in items) {
-        if (items[i].className == 'pokemon-card') { // get rid of the whitespace text nodes
+        if (items[i].className == 'pokemon-card') { // get rid of useless nodes
             itemsArr.push(items[i]);
         }
     }
 
-    if (e.target.value == 'name') { //replace to name  
+    if (e.target.value == 'name') {
 
         itemsArr.sort((a, b) => {
             if (a.children[2].innerText < b.children[2].innerText) {                 //a is less than b by some ordering criterion
@@ -131,126 +165,69 @@ const sortPokemons = (e) => {
     }
 
     if (e.target.value == 'name' || e.target.value == 'id' || e.target.value == 'type') {
+
         for (let i = 0; i < itemsArr.length; ++i) {
             listBox.appendChild(itemsArr[i]);
         }
         refreshPage();
+
     }
 }
 
-const sortBtn = document.getElementById("sortBtn");
-sortBtn.addEventListener('click', sortPokemons)
-
+/* 
+Process: Get all pokemons from local storage and append them to DOM.
+*/
 const showLocalStorage = () => {
     let pokemon;
     if (window.localStorage.length >= 2) {
         for (let i = 0; i < (window.localStorage.length); i++) {
             if (window.localStorage.key(i) != 'idAccumulator') {
                 pokemon = JSON.parse(window.localStorage.getItem(`${window.localStorage.key(i)}`));
-                addElement(pokemon, true);
+                addPokemon(pokemon, true);
             }
         }
     }
 }
 
-/* Get all pokemon types and append them to Inventory */
-const fillInventory = () => {
-    fetch("https://pokeapi.co/api/v2/type").then(response => response.json()).then(data => {
+/* 
+Process: Get all pokemon types from API and append them with value 0 to Inventory.
+*/
+const setInventory = () => {
+    let fetchPromise = fetch("https://pokeapi.co/api/v2/type").then(response => response.json()).then(data => {
         for (let i = 0; i < data.count; i++) {
             let newElement = document.createElement("p");
             newElement.innerHTML = `Tipo ${data.results[i].name}:<strong id="${data.results[i].name}">0</strong>`;
             inventoryDetails.appendChild(newElement);
+
         }
-        showLocalStorage();
-    });
-}
-
-/* Set/Fill inventory and show pokemons from LOCAL STORAGE */
-window.addEventListener('DOMContentLoaded', (e) => {
-    fillInventory();
-    refreshPage();
-});
-
-
-const chargePokemonNamesInArr = (allPokemonsObject) => {
-    for (let i = 0; i < allPokemonsObject.count; i++) {
-        allPokemonsArr[i] = allPokemonsObject.results[i].name;
-    }
-}
-
-/* Request all Pokemon Names. */
-fetch(`https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0`)
-    .then(response => response.json())
-    .then(allPokemonsItems => {
-        let allPokemonsObject = allPokemonsItems;
-        chargePokemonNamesInArr(allPokemonsObject);
     });
 
+    return fetchPromise;
+}
+
+/* 
+Receives: A node.
+Process: Remove all the childs of a parent node.
+*/
 const removeChildsFromNode = (parent) => {
     while (parent.firstChild) {
         parent.removeChild(parent.firstChild);
     };
 }
 
+/* 
+Receives: ID of the clicked element on the autocompleted list. 
+Process: Add clicked pokemon of the autocompleted list. 
+*/
 const addSelectedPokemon = (listId) => {
-    let pokemon = {
-        nameFetch: ``,
-        name: ``,
-    }
+    let pokemon = {};
     pokemonInput.value = document.getElementById(listId).innerText;
     pokemon.nameFetch = document.getElementById(listId).innerText;
     pokemon.name = pokemon.nameFetch;
-    addElement(pokemon, false);
+    addPokemon(pokemon, false);
 }
 
-/* INPUT LISTENERS *
-
-/* AUTOCOMPLETE */
-pokemonInput.addEventListener("keyup", () => {
-    let idAcc = 1000000;
-    let idAccAux = idAcc;
-    if (pokemonInput.value == '') {
-        removeChildsFromNode(pokemonAutoCompleteList);
-    } else {
-        removeChildsFromNode(pokemonAutoCompleteList);
-        for (let i = 0; i < allPokemonsArr.length; i++) {
-            if (allPokemonsArr[i].includes(pokemonInput.value.toLowerCase())) {
-                let newLi = document.createElement("li");
-                newLi.setAttribute("id", `${idAcc}`);
-                newLi.setAttribute("class", `autocomplete-item`);
-                newLi.setAttribute("onclick", `addSelectedPokemon('${idAcc}')`);
-                newLi.innerText = `${allPokemonsArr[i]}`;
-                pokemonAutoCompleteList.appendChild(newLi);
-                idAcc++;
-            }
-            if (idAcc >= (qPokemonToShow + idAccAux)) {
-                i = allPokemonsArr.length;
-            }
-        }
-    }
-});
-
-pokemonInput.addEventListener("keyup", (e) => {
-    if (e.key == "Enter") {
-        let pokemon = {
-            nameFetch: `${(e.target.value.toLowerCase())}`,
-            name: `${e.target.value}`,
-        }
-
-        if (pokemon) {
-            addElement(pokemon, false);
-        } else {
-            alert("Debe insertar el nombre de un pokemon para anadirlo a la lista.");
-        }
-    }
-});
-
-
-if (window.localStorage.getItem("idAccumulator") != null) {
-    idCount = parseInt(window.localStorage.getItem("idAccumulator"));
-}
-
-
+/* Aux process of refreshPage */
 const showCurrentPage = () => {
     let showCount = 0;
 
@@ -284,6 +261,9 @@ const showCurrentPage = () => {
     }
 }
 
+/* 
+Process: Main process to refresh the current page.
+*/
 const refreshPage = () => {
     let pokemonCollection = document.querySelectorAll(".pokemon-card");
     for (let i = 0; i < pokemonCollection.length; i++) {
@@ -293,12 +273,9 @@ const refreshPage = () => {
     showCurrentPage();
 }
 
-
-
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
+/*
+Process: Shakes the inventory when it's called.
+*/
 const animateInventory = () => {
     inventory.animate([
         { transform: 'translateX(-5px)' },
@@ -314,6 +291,10 @@ const animateInventory = () => {
     });
 }
 
+/* 
+Receives: The ID of the element to erase.
+Process: Erase the element of the specified ID and refresh the page.
+*/
 function eraseElement(idOfElement) {
     let elementToErase = document.getElementById(`${idOfElement}`);
     let pokemonCardTypes = elementToErase.childNodes[7].childNodes;
@@ -321,7 +302,7 @@ function eraseElement(idOfElement) {
     /* Erase from Inventory */
     for (let i = 0; i < (pokemonCardTypes.length); i++) {
         if (pokemonCardTypes[i].className == 'list-pokemon-type flex-and-align') {
-            removeFromInventory(pokemonCardTypes[i].innerHTML);
+            subtractFromInventory(pokemonCardTypes[i].innerHTML);
         }
     }
 
@@ -337,15 +318,23 @@ function eraseElement(idOfElement) {
 
     pokemonCount--;
     refreshCountOfPokemon();
-    showCurrentPage();
+    refreshPage();
     animateInventory();
 }
 
+/* 
+Receives: A pokemon type.
+Returns: The color for that type of pokemon.
+*/
 const setColor = (pokemonType) => {
     return pokemonColors[pokemonType];
 }
 
-const getPokemonID = (pokemon, fromStorage) => {
+/* 
+Receives: A pokemon object and a boolean if it's from storage or not.
+Returns: The corresponding ID for assigning to a pokemon.
+*/
+const assignPokemonID = (pokemon, fromStorage) => {
     if (fromStorage) {
         return pokemon.id;
     } else {
@@ -353,16 +342,37 @@ const getPokemonID = (pokemon, fromStorage) => {
     }
 }
 
+/* 
+Process: Fires an error popup if a pokemon fetch gets failed.
+*/
 const errorHandler = (error) => {
-    alert(
-        `
-            Ha ocurrido un error al añadir su pokemon.
-            Codigo de Error: ${error}
-        `
-    );
+    let texto = 
+    `
+    Asegurate de haber escrito un nombre o ID correcto.
+    Codigo de error ->>> ${error}
+    `;
+
+    Swal.fire({
+        title: '¡Ha ocurrido un error al añadir el pokemon!',
+        text: texto,
+        icon: 'error',
+        confirmButtonText: 'OK'
+    });
 }
 
-const getPokemonType = (pokemonTypes) => {
+/* 
+Receives: A string.
+Returns: Same string with the first letter capitalized.
+*/
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+/* 
+Receives: An array of pokemon types.
+Returns: The HTML that must be shown on DOM.
+*/
+const getPokemonTypesHTML = (pokemonTypes) => {
     let str = '';
 
     for (let i = 0; i < pokemonTypes.length; i++) {
@@ -372,15 +382,23 @@ const getPokemonType = (pokemonTypes) => {
     return str;
 }
 
+
+/* 
+Receives: +A pokemon object 
+          +A boolean if it's from storage or not.
+          +Whole fetch data of the pokemon from API.
+
+Process: Sets the pokemon values and append it in the DOM.
+*/
 const addToDOM = (pokemon, fromStorage, fetchData) => {
     const elementToAdd = document.createElement("div");
     elementToAdd.setAttribute("class", "pokemon-card");
-    elementToAdd.setAttribute("id", `${getPokemonID(pokemon, fromStorage)}`);
+    elementToAdd.setAttribute("id", `${assignPokemonID(pokemon, fromStorage)}`);
     elementToAdd.style.display = "none";
     elementToAdd.style.backgroundColor = `${setColor(fetchData.types[0].type.name)}`;
     elementToAdd.innerHTML =
         `
-            <span class="erase-btn" onclick="eraseElement('${getPokemonID(pokemon, fromStorage)}')"><i class="fa-solid fa-trash-can"></i></span>
+            <span class="erase-btn" onclick="eraseElement('${assignPokemonID(pokemon, fromStorage)}')"><i class="fa-solid fa-trash-can"></i></span>
             
             <div>
                 <img src="${fetchData.sprites.front_default}" alt="${capitalizeFirstLetter(fetchData.name)}">
@@ -391,31 +409,40 @@ const addToDOM = (pokemon, fromStorage, fetchData) => {
             </p>
             
             <div class="pokemon-types-box">
-                ${getPokemonType(fetchData.types)}
+                ${getPokemonTypesHTML(fetchData.types)}
             </div>
         `
         ;
     listBox.appendChild(elementToAdd);
 }
 
+/* 
+Receives: A pokemon that will be getted from the API.
+Returns: A promise that will have the information of the pokemon if it's fulfilled.
+*/
 const getPokemonFromAPI = (pokemon) => {
     let fetchPromise = fetch(`https://pokeapi.co/api/v2/pokemon/` + `${pokemon.nameFetch}`);
     return fetchPromise;
 }
 
-const addElement = (pokemon, fromStorage) => {
+
+/* 
+Receives: A pokemon and a boolean if it's from storage or not.
+Process: Add the received pokemon and refresh the page.
+*/
+const addPokemon = (pokemon, fromStorage) => {
     const fetchPromise = getPokemonFromAPI(pokemon, fromStorage);
 
     fetchPromise.then((response) => response.json())
         .then((responseData) => {
             addToDOM(pokemon, fromStorage, responseData);
             if (!fromStorage) {
-                let pokemonProperties = {
+                let pokemonAux = {
                     nameFetch: `${responseData.name}`,
-                    name: `${capitalizeFirstLetter(pokemon.name)}`,
+                    name: `${capitalizeFirstLetter(responseData.species.name)}`,
                     id: `${idCount}`,
                 };
-                window.localStorage.setItem(`${idCount}`, JSON.stringify(pokemonProperties));
+                window.localStorage.setItem(`${idCount}`, JSON.stringify(pokemonAux));
                 idCount++;
                 window.localStorage.setItem("idAccumulator", `${idCount}`);
             } else {
@@ -423,16 +450,35 @@ const addElement = (pokemon, fromStorage) => {
             }
             pokemonCount++;
             refreshCountOfPokemon();
-            showCurrentPage();
+            refreshPage();
             addToInventory(responseData.types);
         }).catch((error) => errorHandler(error));
 }
 
-/* Event listeners / Event Handlers */
+/* --------------------------------------------
+                EVENT HANDLERS
+-----------------------------------------------*/
 
-const changePokemonName = (e) => {
-    let newName = prompt("Inserta un nuevo nombre");
-    if(newName != ''){
+/* 
+Fires an input to change the name of the clicked pokemon.
+*/
+async function changePokemonName (e) {
+    const { value: newName }  = await Swal.fire({
+        title: 'Inserta un nuevo nombre',
+        input: 'text',
+        inputLabel: 'Nuevo nombre',
+        showCancelButton: true,
+        inputAttributes: {
+            autocomplete: 'off',
+        },
+        inputValidator: (value) => {
+          if (!value) {
+            return '¡Tienes que escribir algo!'
+          }
+        }
+    });
+    console.log(newName)
+    if(newName != undefined){
         e.target.innerHTML = newName;
         let previous = JSON.parse(window.localStorage.getItem(e.target.parentNode.id));
         previous.name = newName;
@@ -440,7 +486,127 @@ const changePokemonName = (e) => {
     }
 }
 
-/* Doc Listener */
+/* 
+Receives: A keyup event from input filter.
+Process: Filter pokemons that match with the current input value.
+*/
+const pokemonFilter = (e) => {
+    let pokemonArr = document.getElementsByClassName("pokemon-card");
+    for (i = 0; i < pokemonArr.length; i++) {
+        if (pokemonArr[i].children[2].innerText.toLowerCase().includes(e.target.value)) {
+            pokemonArr[i].style.display = "flex";
+        } else {
+            pokemonArr[i].style.display = "none";
+        }
+    }
+
+    if (e.target.value == '') {
+        refreshPage();
+    }
+}
+
+/* 
+Process: Refresh the count of pokemons.
+*/
+const refreshCountOfPokemon = () => {
+    pokemonCountDOM.innerText = `${pokemonCount}`;
+}
+
+
+/* 
+Process: Moves to next page.
+*/
+const toNextPage = () => {
+    if (((POKEMONSPERPAGE * currentPage) + POKEMONSPERPAGE) < pokemonCount) {
+        currentPage++;
+        refreshPage();
+    }
+}
+
+/* 
+Process: Moves to previous page.
+*/
+const toPreviousPage = () => {
+    if (currentPage > 0) {
+        currentPage--;
+        refreshPage();
+    }
+}
+
+/* 
+Process: Shows a list of pokemons below the input that match with the current input value.
+*/
+const autoComplete = () => {
+    let idAcc = 1000000;
+    let idAccAux = idAcc;
+    if (pokemonInput.value == '') {
+        removeChildsFromNode(pokemonAutoCompleteList);
+    } else {
+        removeChildsFromNode(pokemonAutoCompleteList);
+        for (let i = 0; i < allPokemonsArr.length; i++) {
+            if (allPokemonsArr[i].includes(pokemonInput.value.toLowerCase())) {
+                let newLi = document.createElement("li");
+                newLi.setAttribute("id", `${idAcc}`);
+                newLi.setAttribute("class", `autocomplete-item`);
+                newLi.setAttribute("onclick", `addSelectedPokemon('${idAcc}')`);
+                newLi.innerText = `${allPokemonsArr[i]}`;
+                pokemonAutoCompleteList.appendChild(newLi);
+                idAcc++;
+            }
+            if (idAcc >= (qPokemonToShow + idAccAux)) {
+                i = allPokemonsArr.length;
+            }
+        }
+    }
+}
+
+/* 
+Process: Adds the pokemon written on input or a clicked one from autocomplete list.
+*/
+const addFromInput = (e) => {
+    if (e.key == "Enter") {
+        if(e.target.value != ''){
+            let pokemon = {
+                nameFetch: `${(e.target.value.toLowerCase())}`,
+                name: `${e.target.value}`,
+            }
+            addPokemon(pokemon, false);
+        }else{
+            Swal.fire({
+                title: 'Error!',
+                text: '¡Debes insertar el nombre o ID de un pokemon para añadirlo a la lista!',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+}
+
+/* --------------------------------------------
+                EVENT LISTENERS
+-----------------------------------------------*/
+
+nextPageBtn.addEventListener("click", () => toNextPage());
+
+previousPageBtn.addEventListener("click", () => toPreviousPage());
+
+inputFilter.addEventListener("keyup", pokemonFilter);
+
+questionSymbol.addEventListener("click", () => questionSymbolDetails.classList.toggle("invisible"));
+
+inventoryBtn.addEventListener("click", () => inventoryDetails.classList.toggle("invisible"));
+
+sortBtn.addEventListener('click', sortPokemons);
+
+pokemonInput.addEventListener("keyup", () => autoComplete());
+
+pokemonInput.addEventListener("keyup", addFromInput);
+
+/*
+DOC LISTENER 
++Displays and hide input button.
++Fires changePokemonName process when a pokemon name it's clicked.
+*/
 document.addEventListener("click", (e) => {
 
     if (e.target && e.target.className == "list-button flex-and-align") {
@@ -457,43 +623,12 @@ document.addEventListener("click", (e) => {
 
 });
 
-const pokemonFilter = (e) => {
-    let pokemonArr = document.getElementsByClassName("pokemon-card");
-    for (i = 0; i < pokemonArr.length; i++) {
-        if (pokemonArr[i].children[2].innerText.toLowerCase().includes(e.target.value)) {
-            pokemonArr[i].style.display = "flex";
-        } else {
-            pokemonArr[i].style.display = "none";
-        }
+/* Sets inventory and show pokemons from LOCAL STORAGE */
+window.addEventListener('DOMContentLoaded', (e) => {
+    if (window.localStorage.getItem("idAccumulator") != null) {
+        idCount = parseInt(window.localStorage.getItem("idAccumulator"));
     }
-
-    if (e.target.value == '') {
-        refreshPage();
-    }
-}
-
-inputFilter.addEventListener("keyup", pokemonFilter);
-
-const refreshCountOfPokemon = () => {
-    pokemonCountDOM.innerText = `${pokemonCount}`;
-}
-
-const nextPage = document.getElementById("nextPageButton");
-const previousPage = document.getElementById("previousPageButton");
-const pageCountDOM = document.getElementById("pageCountDOM");
-const currentPageDOM = document.querySelector(".current-page-count");
-const lastPageDOM = document.querySelector(".last-page-count");
-
-nextPage.addEventListener("click", () => {
-    if (((POKEMONSPERPAGE * currentPage) + POKEMONSPERPAGE) < pokemonCount) {
-        currentPage++;
-        refreshPage();
-    }
-});
-
-previousPage.addEventListener("click", () => {
-    if (currentPage > 0) {
-        currentPage--;
-        refreshPage();
-    }
+    let inventorySetted = setInventory();
+    inventorySetted.then(() => showLocalStorage());
+    refreshPage();
 });
