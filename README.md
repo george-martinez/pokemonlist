@@ -2,7 +2,7 @@
                  ."-,.__
                  `.     `.  ,
               .--'  .._,'"-' `.
-             .    .'         `'   YOU CAN SAVE YOU'RE POKEMONS HERE
+             .    .'         `'   YOU CAN SAVE YOUR POKEMONS HERE
              `.   /          ,'
                `  '--.   ,-"'
                 `"`   |  \
@@ -21,8 +21,10 @@
 
 ## Screenshots
 
-<img src="" align="right">
+<img src="https://github.com/george-martinez/pokemonlist/blob/main/assets/Screenshots/main_page.png?raw=true" align="right">
 
-## Proyect Details
+#### Proyect Details
 
-The project was made using HTML5, CSS3, JavascriptVanilla
+The project was made using HTML5, CSS3 and Javascript Vanilla.
+
+Details of Each function are inside the .js file.
