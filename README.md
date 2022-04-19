@@ -26,7 +26,7 @@
 
 #### Proyect Details
 
-The project was made using HTML5, CSS3 and Javascript Vanilla.
+This project was made using HTML5, CSS3 and Javascript Vanilla.
 
 Functions:<br>
             &nbsp;&nbsp;&nbsp;&nbsp;Create, Read, Update and Delete a Pokemon.<br>
