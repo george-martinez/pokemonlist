@@ -477,7 +477,7 @@ async function changePokemonName (e) {
           }
         }
     });
-    console.log(newName)
+    
     if(newName != undefined){
         e.target.innerHTML = newName;
         let previous = JSON.parse(window.localStorage.getItem(e.target.parentNode.id));
